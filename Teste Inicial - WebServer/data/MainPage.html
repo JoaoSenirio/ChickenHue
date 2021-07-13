@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chicken Hue</title>
 </head>
-<body onload="secondsToHMS()"> 
+<body onload="setup()"> 
 
     <div>
         <h1>Chicken Hue definitions</h1>
@@ -14,39 +14,45 @@
     </div>    
 
     <script>
+    function setup(){
+        secondsToHMS();
+        getLightStatus();
+    }
+    
     function getLightStatus(){
-            var http_request = new XMLHttpRequest();
-            http_request.onreadystatechange = function(){
-                if(this.readyState == 4 && this.status == 200){
-                    document.getElementById("status").innerHTML = this.responseText;
-                }
-            }        
-            http_request.open("GET", "/lightStatus", true);
-            http_request.send(null);
-            window.setTimeout("getLightStatus()", 5000);
-        }      
+        var http_request = new XMLHttpRequest();
+        http_request.onreadystatechange = function(){
+            if(this.readyState == 4 && this.status == 200){
+                if(this.responseText == 1) document.getElementById("status").innerHTML = "Ligado";
+                else document.getElementById("status").innerHTML = "Desligado";
+            }
+        }        
+        http_request.open("GET", "/lightStatus", true);
+        http_request.send(null);
+        window.setTimeout("getLightStatus()", 5000);
+    }      
     
     function secondsToHMS(){
-            let seconds2TurnOff = #seconds2TurnOff#;
-            let seconds2TurnOn = #seconds2TurnOn#;
+        let seconds2TurnOff = #seconds2TurnOff#;
+        let seconds2TurnOn = #seconds2TurnOn#;
             
-            let NightHour = Math.floor(seconds2TurnOff/3600);
-            let NightMinute = Math.floor((seconds2TurnOff%3600)/60);
-            if(NightHour < 10) NightHour = "0" + NightHour;
-            if(NightMinute < 10) NightMinute = "0" + NightMinute;
+        let NightHour = Math.floor(seconds2TurnOff/3600);
+        let NightMinute = Math.floor((seconds2TurnOff%3600)/60);
+        if(NightHour < 10) NightHour = "0" + NightHour;
+        if(NightMinute < 10) NightMinute = "0" + NightMinute;
 
-            let MorningHour = Math.floor(seconds2TurnOn/3600);
-            let MorningMinute = Math.floor((seconds2TurnOn%3600)/60);
-            if(MorningHour < 10) MorningHour = "0" + MorningHour;
-            if(MorningMinute < 10) MorningMinute = "0" + MorningMinute;
+        let MorningHour = Math.floor(seconds2TurnOn/3600);
+        let MorningMinute = Math.floor((seconds2TurnOn%3600)/60);
+        if(MorningHour < 10) MorningHour = "0" + MorningHour;
+        if(MorningMinute < 10) MorningMinute = "0" + MorningMinute;
 
-            document.getElementById("NightTurnOff").innerHTML = NightHour + ':' + NightMinute;
-            document.getElementById("MorningTurnOn").innerHTML = MorningHour + ':' + MorningMinute;
-        }
+        document.getElementById("NightTurnOff").innerHTML = NightHour + ':' + NightMinute;
+        document.getElementById("MorningTurnOn").innerHTML = MorningHour + ':' + MorningMinute;
+    }
         
     function SetAutomaticToManual(){
-            location.replace("/ManualPage");
-        }
+        location.replace("/ManualPage");
+    }
     </script> 
 
     <style>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Hue</title>
+</head>
+<body onload="secondsToHMS()"> 
+
+    <div>
+        <h1>Chicken Hue definitions</h1>
+        <p></p>
+    </div>    
+
+    <script>
+    function getLightStatus(){
+            var http_request = new XMLHttpRequest();
+            http_request.onreadystatechange = function(){
+                if(this.readyState == 4 && this.status == 200){
+                    document.getElementById("status").innerHTML = this.responseText;
+                }
+            }        
+            http_request.open("GET", "/lightStatus", true);
+            http_request.send(null);
+            window.setTimeout("getLightStatus()", 5000);
+        }      
+    
+    function secondsToHMS(){
+            let seconds2TurnOff = #seconds2TurnOff#;
+            let seconds2TurnOn = #seconds2TurnOn#;
+            
+            let NightHour = Math.floor(seconds2TurnOff/3600);
+            let NightMinute = Math.floor((seconds2TurnOff%3600)/60);
+            if(NightHour < 10) NightHour = "0" + NightHour;
+            if(NightMinute < 10) NightMinute = "0" + NightMinute;
+
+            let MorningHour = Math.floor(seconds2TurnOn/3600);
+            let MorningMinute = Math.floor((seconds2TurnOn%3600)/60);
+            if(MorningHour < 10) MorningHour = "0" + MorningHour;
+            if(MorningMinute < 10) MorningMinute = "0" + MorningMinute;
+
+            document.getElementById("NightTurnOff").innerHTML = NightHour + ':' + NightMinute;
+            document.getElementById("MorningTurnOn").innerHTML = MorningHour + ':' + MorningMinute;
+        }
+        
+    function SetAutomaticToManual(){
+            location.replace("/ManualPage");
+        }
+    </script> 
+
+    <style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    /* Hide default HTML checkbox */
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }   
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+    </style>
+
+        <div>
+        <p>Horários pré-estabelecidos:</p>
+        <ul>
+            <li>Status da lâmpada: <span id="status"></span></li>
+            <li>A tarde - Ligar às 17:00</li>   
+            <li>A noite - Desligar às <span id="NightTurnOff"></span></li>
+            <li>De manhã - Ligar às <span id="MorningTurnOn"></span></li> 
+            <li>De manhã - Deligar às 6:00</li>
+        </ul>
+        <hr>
+        <label class="switch">
+            <input id="setAutomaticToManual" type="checkbox" onclick="SetAutomaticToManual()">
+            <span class="slider round"></span>
+        </label>
+    </div>
+</body>
+</html>

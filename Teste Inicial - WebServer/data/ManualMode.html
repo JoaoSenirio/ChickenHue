@@ -1,112 +1,141 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chicken Hue</title>
-</head>
-<body>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Chicken Hue</title>
 
-    <style>
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-    
-        /* Hide default HTML checkbox */
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-    
-        /* The slider */
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }   
-    
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-    
-        input:checked + .slider {
-            background-color: #2196F3;
-        }
-    
-        input:focus + .slider {
-            box-shadow: 0 0 1px #2196F3;
-        }
-    
-        input:checked + .slider:before {
-            -webkit-transform: translateX(26px);
-            -ms-transform: translateX(26px);
-            transform: translateX(26px);
-        }
-    
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 34px;
-        }
-    
-        .slider.round:before {
-            border-radius: 50%;
-        }
-    </style>
-    
-    <script>
-        function getLightStatus(){
-            var http_request = new XMLHttpRequest();
-            http_request.onreadystatechange = function(){
-                if(this.readyState == 4 && this.status == 200){
-                    document.getElementById("status").innerHTML = this.responseText;
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+            rel="stylesheet">
+
+        <link rel="icon" href="icon.png">
+
+        <style>
+            * {
+                font-family: 'Raleway', sans-serif;
+            }
+
+            .header {
+                background-color: #FF6565; text-align: center; 
+            }
+            .logo {
+                width: 346px; height: 122px; display: inline-block; margin: 116px 0 116px 0;
+            }
+
+
+            .lamp-state-container {
+                margin-top: 48px; 
+                width: 306px; 
+                height: 66px; 
+                display: inline-block;
+                background: #F3F3F3; 
+                box-shadow: 0px 0px 48px 1px rgba(0, 0, 0, 0.25); 
+                border-radius: 12px;
+            }
+            .lamp-state-title {
+                padding: 6px 13px; 
+                font-weight: 500; 
+                font-size: 18px; 
+                text-align: start; 
+                float: left;
+            }
+            #lamp-state-indicator {
+                background: #4ED353; 
+                width: 12px; height: 12px; 
+                border-radius: 20px;
+                margin: 27px 0; 
+                float: left;
+            }
+            #lamp-state-label {
+                padding: 6px 8px; 
+                font-weight: 600; 
+                font-size: 18px; 
+                text-align: start; 
+                float: left;
+            }
+        </style>
+
+        <script>
+            function getLightStatus() {
+
+                let lightStatus = 0;
+
+                var http_request = new XMLHttpRequest();
+                http_request.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        lightStatus = this.responseText;
+                    }
                 }
-            }        
-            http_request.open("GET", "/lightStatus", true);
-            http_request.send(null);
-            window.setTimeout("getLightStatus()", 5000);
-        }
+                http_request.open("GET", "/lightStatus", true);
+                http_request.send(null);
+                window.setTimeout("getLightStatus()", 5000);
 
-        function setLightStatus(lightStatus){
-            var setLightStatus = new XMLHttpRequest();
-            setLightStatus.open("GET", "/SetLightStatus?Set" + lightStatus, true);
-            setLightStatus.send(null);
-        }
+                if (lightStatus) {
+                    document.getElementById('lamp-state-indicator').style.background = '#4ED353';
+                    document.getElementById('lamp-state-label').innerHTML = 'Ligado'
+                }
+                else { 
+                    document.getElementById('lamp-state-indicator').style.background = '#FF6565';
+                    document.getElementById('lamp-state-label').innerHTML = 'Desligado'
+                }
+            }
 
-        function SetAutomaticToManual(){
-            location.replace("/MainPage");
-        }
-    </script>
+            function setLightStatus(lightStatus) {
 
+                if (lightStatus) alert('on') // TESTE PARA PROPÓSITOS DE DEBUG E DE FACILITAR INTEGRAÇÃO
+                else alert ('off')           // RETIRAR ESSAS LINHAS APÓS COMPLETO
 
-    <div>
-        <p>Status da lâmpada: <span id="status"></span></p>
-        <input type="button" value="Ligar" onclick="setLightStatus(1)">
-        <input type="button" value="Desligar" onclick="setLightStatus(0)">
-    </div>
-    <hr>
-    <label class="switch">
-        <input id="setAutomaticToManual" type="checkbox" onclick="SetAutomaticToManual()">
-        <span class="slider round"></span>
-    </label>
+                var setLightStatus = new XMLHttpRequest();
+                setLightStatus.open("GET", "/SetLightStatus?Set" + lightStatus, true);
+                setLightStatus.send(null);
+            }
 
-</body>
+            function SetAutomaticToManual() {
+                location.replace("/MainPage");
+            }
+        </script>
+    </head>
+
+    <body onload="setup()" style="width: 600px; margin: 0; text-align: center;">
+
+        <!-- Header -->
+        <div class="header">
+            <a href="MainPage.html" style="position: absolute; z-index: 3; margin: 24px; left: 0;
+                      color: white; font-weight: 600; font-size: 12px;">Navegar para o Modo Automático</a>
+            <img src="logo.png" class="logo" />
+        </div>
+
+        <div>
+            <div class="lamp-state-container">
+                <p class="lamp-state-title">Status da Lâmpada:</p>
+                <div id="lamp-state-indicator"></div>
+                <p id="lamp-state-label">Ligado</p>
+            </div>
+
+            <div style="margin: 104px 0 0 25px;">
+                <h3 style="font-weight: 500; font-size: 18px;">Controle Manual da Lâmpada</h3>
+                <div style="text-align: center; display: inline-block;">
+                    <div onclick="setLightStatus(1)"
+                    style="width: 112px; height: 112px; background: #4ED353; float: left; margin-right: 9px; cursor: pointer;
+                                box-shadow: 0px 0px 67px 10px rgba(0, 0, 0, 0.25);border-radius: 16px; text-align: center;">
+                        <p style="padding: 35px 0; margin: 0; font-weight: bold; font-size: 36px; color: white;">
+                            ON
+                        </p>
+                    </div>
+                    <div onclick="setLightStatus(0)"
+                    style="width: 112px; height: 112px; background: #FF6565; float: left; margin-left: 9px; cursor: pointer;
+                                box-shadow: 0px 0px 67px 10px rgba(0, 0, 0, 0.25);border-radius: 16px; text-align: center;">
+                        <p style="padding: 35px 0; margin: 0; font-weight: bold; font-size: 36px; color: white;">
+                            OFF
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
 </html>
